@@ -20,29 +20,25 @@ let model;
     $(".progress-bar").hide();
 })();
 
-function preprocessImage(image) {
 
-  // resize the input image to mobilenet's target size of (224, 224)
-  let tensor = tf.browser.fromPixels(image)
-    .resizeNearestNeighbor([224, 224])
-    .toFloat();
-
-
-  let offset = tf.scalar(127.5);
-    return tensor.sub(offset)
-      .div(offset)
-      .expandDims();
-  
-}
 
 
 $("#predict_button").click(async function () {
-  let image = document.getElementById("selected-image");
-  let tensor = preprocessImage(image);
-      
+  
+  let image = $("#selected-image").get(0);
+let tensor = tf.browser.fromPixels(image)
+    .resizeNearestNeighbor([224, 224])
+    .toFloat();
+    
 
-  let predictions = await model.predict(tensor).data();
-  let top5 = Array.from(predictions)
+    let offset = tf.scalar(127.5);
+    let tensor_f = tensor.sub(offset)
+        .div(offset)
+        .expandDims();
+
+
+  let predictions = await model.predict(tensor_f).data();
+  let top= Array.from(predictions)
       .map(function (p, i) {
           return {
               probability: p,
@@ -51,6 +47,7 @@ $("#predict_button").click(async function () {
       }).sort(function (a, b) {
           return b.probability - a.probability;
       }).slice(0, 5);
+
 
   $("#prediction-list").empty();
   top.forEach(function (p) {
