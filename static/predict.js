@@ -46,7 +46,7 @@ let tensor = tf.browser.fromPixels(image)
           };
       }).sort(function (a, b) {
           return b.probability - a.probability;
-      }).slice(0, 5);
+      }).slice(0, 1);
 
 
   $("#prediction-list").empty();
